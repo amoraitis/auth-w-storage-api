@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWithStorage.API", "AuthWithStorage.API\AuthWithStorage.API.csproj", "{962EA92B-0916-447A-BF7F-CF1D77452997}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWithStorage.Application", "AuthWithStorage.Application\AuthWithStorage.Application.csproj", "{EB9BB5BA-1FF6-4980-B2AD-2771052E56C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWithStorage.Domain", "AuthWithStorage.Domain\AuthWithStorage.Domain.csproj", "{CBB1033D-98F9-4C5C-A50A-2E13EBF9A418}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWithStorage.Infrastructure", "AuthWithStorage.Infrastructure\AuthWithStorage.Infrastructure.csproj", "{7BAF9AD9-9374-46EA-8D99-6BE33D849570}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthWithStorage.Tests", "AuthWithStorage.Tests\AuthWithStorage.Tests.csproj", "{0C4F6066-2D2C-4473-9D6B-EF1557101ACE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{962EA92B-0916-447A-BF7F-CF1D77452997}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{962EA92B-0916-447A-BF7F-CF1D77452997}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{962EA92B-0916-447A-BF7F-CF1D77452997}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{962EA92B-0916-447A-BF7F-CF1D77452997}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB9BB5BA-1FF6-4980-B2AD-2771052E56C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB9BB5BA-1FF6-4980-B2AD-2771052E56C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB9BB5BA-1FF6-4980-B2AD-2771052E56C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB9BB5BA-1FF6-4980-B2AD-2771052E56C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBB1033D-98F9-4C5C-A50A-2E13EBF9A418}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBB1033D-98F9-4C5C-A50A-2E13EBF9A418}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBB1033D-98F9-4C5C-A50A-2E13EBF9A418}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBB1033D-98F9-4C5C-A50A-2E13EBF9A418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BAF9AD9-9374-46EA-8D99-6BE33D849570}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BAF9AD9-9374-46EA-8D99-6BE33D849570}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BAF9AD9-9374-46EA-8D99-6BE33D849570}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BAF9AD9-9374-46EA-8D99-6BE33D849570}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C4F6066-2D2C-4473-9D6B-EF1557101ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C4F6066-2D2C-4473-9D6B-EF1557101ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C4F6066-2D2C-4473-9D6B-EF1557101ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C4F6066-2D2C-4473-9D6B-EF1557101ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6196BB99-BFE6-41F0-9550-376DF8F05D87}
+	EndGlobalSection
+EndGlobal
