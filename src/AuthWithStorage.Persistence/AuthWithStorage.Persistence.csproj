@@ -8,7 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthWithStorage.Domain\AuthWithStorage.Domain.csproj" />
-    <ProjectReference Include="..\AuthWithStorage.Infrastructure\AuthWithStorage.Infrastructure.csproj" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.8.5" />
   </ItemGroup>
 
 </Project>

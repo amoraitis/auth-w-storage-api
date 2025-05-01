@@ -1,3 +1,4 @@
+using AuthWithStorage.API.Extensions;
 
 namespace AuthWithStorage.API
 {
@@ -5,14 +6,14 @@ namespace AuthWithStorage.API
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication
+                .CreateBuilder(args)
+                .InitApp();
 
             // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+
+            builder.Services.InitServices(builder.Configuration);
 
             var app = builder.Build();
 
