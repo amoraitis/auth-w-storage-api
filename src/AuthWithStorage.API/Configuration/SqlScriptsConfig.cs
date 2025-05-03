@@ -1,0 +1,4 @@
+﻿namespace AuthWithStorage.API.Configuration
+{
+    
+}

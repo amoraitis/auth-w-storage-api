@@ -1,9 +1,6 @@
-﻿using System;
-using AuthWithStorage.Domain.Enums;
-
-namespace AuthWithStorage.Domain.Entities
+﻿namespace AuthWithStorage.Domain.Entities
 {
-    public class File
+    public class File : IEntity<int>
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -1,6 +1,6 @@
-﻿using System.Data;
+﻿using AuthWithStorage.Domain.Entities;
 using AuthWithStorage.Infrastructure.Data;
-using Microsoft.Data.SqlClient;
+using AuthWithStorage.Infrastructure.Repositories;
 using Microsoft.IdentityModel.Protocols.Configuration;
 
 namespace AuthWithStorage.API.Extensions
@@ -11,7 +11,8 @@ namespace AuthWithStorage.API.Extensions
         {
             return services
                 .AddOpenAPI()
-                .AddDatabase(configuration);
+                .AddDatabase(configuration)
+                .AddRepositories();
         }
 
         private static IServiceCollection AddOpenAPI(this IServiceCollection services)
@@ -31,6 +32,12 @@ namespace AuthWithStorage.API.Extensions
         private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<DbContext>(new DbContext(configuration["ConnectionString"] ?? throw new InvalidConfigurationException("Missing connectionString!")));
+            return services;
+        }
+
+        private static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            services.AddScoped<IRepository<User, int>, UserRepository>();
             return services;
         }
     }

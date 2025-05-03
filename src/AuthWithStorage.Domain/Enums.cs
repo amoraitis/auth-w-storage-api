@@ -1,4 +1,4 @@
-namespace AuthWithStorage.Domain.Enums
+namespace AuthWithStorage.Domain
 {
     public enum Permission {
         // TODO: Feed

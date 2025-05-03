@@ -1,24 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>disable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aa3e2c9e-98ed-4bd0-bfc7-b9be4345a7f7</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-  </PropertyGroup>
+ <PropertyGroup>
+   <TargetFramework>net8.0</TargetFramework>
+   <Nullable>disable</Nullable>
+   <ImplicitUsings>enable</ImplicitUsings>
+   <UserSecretsId>aa3e2c9e-98ed-4bd0-bfc7-b9be4345a7f7</UserSecretsId>
+   <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+ </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-  </ItemGroup>
+ <ItemGroup>
+   <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+   <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+ </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
+ <ItemGroup>
+   <Folder Include="Controllers\" />
+ </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\AuthWithStorage.Application\AuthWithStorage.Application.csproj" />
-  </ItemGroup>
+ <ItemGroup>
+   <ProjectReference Include="..\AuthWithStorage.Application\AuthWithStorage.Application.csproj" />
+ </ItemGroup>
+	<Target Name="CopySqlScripts" AfterTargets="Build">
+		<PropertyGroup>
+			<!-- Get the parent of the solution directory -->
+			<SqlRoot>$([System.IO.Path]::GetFullPath('$(SolutionDir)..\sql'))</SqlRoot>
+		</PropertyGroup>
+
+		<ItemGroup>
+			<SqlScripts Include="$(SqlRoot)\**\*" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(SqlScripts)" DestinationFiles="@(SqlScripts->'$(OutDir)sql\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+	</Target>
+
 
 </Project>
