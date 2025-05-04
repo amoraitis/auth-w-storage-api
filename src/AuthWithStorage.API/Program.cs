@@ -1,5 +1,6 @@
 using AuthWithStorage.API.Extensions;
 using AuthWithStorage.Infrastructure.Data;
+using Serilog;
 
 namespace AuthWithStorage.API
 {
@@ -39,7 +40,19 @@ namespace AuthWithStorage.API
             });
 #pragma warning restore ASP0014 // Suggest using top level route registrations
 
-            app.Run();
+            try
+            {
+                Log.Information("Starting up");
+                app.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Application start-up failed");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         private static void InitDatabase(ConfigurationManager configuration)
