@@ -28,10 +28,16 @@ namespace AuthWithStorage.API
             }
 
             app.UseHttpsRedirection();
-
+            app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllers();
+#pragma warning disable ASP0014 // Suggest using top level route registrations
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers().RequireAuthorization();
+            });
+#pragma warning restore ASP0014 // Suggest using top level route registrations
 
             app.Run();
         }
