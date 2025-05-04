@@ -1,18 +1,19 @@
 namespace AuthWithStorage.Domain
 {
-    public enum Permission {
+    public enum PermissionType {
         // TODO: Feed
+        Unknown = 0,
         Read,
         Write,
-        Execute,
-        Delete
+        Delete,
+        Update
     }
     public enum UserRole
     {
         Unknown = 0,
-        Admin,
-        User,
-        Guest
+        Admin = 1,
+        User = 2,
+        Manager = 3
     }
 
     public enum FileType

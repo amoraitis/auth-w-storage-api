@@ -1,7 +1,14 @@
-﻿using AuthWithStorage.Domain.Entities;
+﻿using AuthWithStorage.Application.Mappers;
+using AuthWithStorage.Application.Validators;
+using AuthWithStorage.Domain.Entities;
 using AuthWithStorage.Infrastructure.Data;
 using AuthWithStorage.Infrastructure.Repositories;
+using FluentValidation;
 using Microsoft.IdentityModel.Protocols.Configuration;
+using System;
+using System.Text;
+using AuthWithStorage.Application.DTOs;
+using AuthWithStorage.Domain.Queries;
 
 namespace AuthWithStorage.API.Extensions
 {
@@ -12,6 +19,7 @@ namespace AuthWithStorage.API.Extensions
             return services
                 .AddOpenAPI()
                 .AddDatabase(configuration)
+                .AddAutoMapper(typeof(MappingProfile))
                 .AddRepositories();
         }
 
@@ -37,7 +45,11 @@ namespace AuthWithStorage.API.Extensions
 
         private static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IRepository<User, int>, UserRepository>();
+            services.AddScoped<IValidator<UserDto>, UserDtoValidator>();
+            services.AddScoped<IRepository<User, int, UserSearchQuery>, UserRepository>();
+            return services;
+        }
+
             return services;
         }
     }

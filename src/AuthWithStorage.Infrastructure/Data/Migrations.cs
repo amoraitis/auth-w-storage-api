@@ -31,7 +31,8 @@ namespace AuthWithStorage.Infrastructure.Data
                 SqlScriptsConfig.Files,
                 SqlScriptsConfig.Permissions,
                 SqlScriptsConfig.RolePermissions,
-                SqlScriptsConfig.AuditLogs
+                SqlScriptsConfig.AuditLogs,
+                SqlScriptsConfig.SCRIPT_Seed
             };
 
             var combinedQuery = string.Join(Environment.NewLine, scriptKeys
@@ -45,6 +46,33 @@ namespace AuthWithStorage.Infrastructure.Data
 
                 connection.Execute(combinedQuery);
             }
+
+            var sps = new[]
+            {
+                SqlScriptsConfig.SP_GetUsersFiltered
+            };
+
+            foreach (var sp in sps)
+            {
+                var query = configuration[sp];
+                if (!string.IsNullOrEmpty(query))
+                {
+                    var batches = query.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    using var connection = new SqlConnection(connectionString);
+                    connection.Open();
+
+                    foreach (var batch in batches)
+                    {
+                        if (!string.IsNullOrWhiteSpace(batch))
+                        {
+                            using var command = new SqlCommand(batch.Trim(), connection);
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+
         }
 
         public static class SqlScriptsConfig
@@ -57,6 +85,10 @@ namespace AuthWithStorage.Infrastructure.Data
             public static string Permissions => "dbo.Permissions.Table.sql";
             public static string RolePermissions => "dbo.RolePermissions.Table.sql";
             public static string AuditLogs => "dbo.AuditLogs.Table.sql";
+
+            public static string SP_GetUsersFiltered = "dbo.GetUsersFiltered.StoredProcedure.sql";
+
+            public static string SCRIPT_Seed = "dbo.Seed.Script.sql";
         }
     }
 }

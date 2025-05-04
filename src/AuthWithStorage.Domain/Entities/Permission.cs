@@ -1,8 +1,8 @@
 ﻿namespace AuthWithStorage.Domain.Entities
 {
-    public class Permission : IEntity<Permission>
+    public class Permission : IEntity<PermissionType>
     {
-        public Permission Id { get; set; }
+        public PermissionType Id { get; set; }
         public string Name { get; set; }
     }
 }

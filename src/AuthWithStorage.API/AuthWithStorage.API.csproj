@@ -14,10 +14,6 @@
  </ItemGroup>
 
  <ItemGroup>
-   <Folder Include="Controllers\" />
- </ItemGroup>
-
- <ItemGroup>
    <ProjectReference Include="..\AuthWithStorage.Application\AuthWithStorage.Application.csproj" />
  </ItemGroup>
 	<Target Name="CopySqlScripts" AfterTargets="Build">
