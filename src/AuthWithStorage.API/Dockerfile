@@ -1,30 +1,31 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# src/AuthWithStorage.API/Dockerfile
 
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-
-# This stage is used to build the service project
+# 1) Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AuthWithStorage.API/AuthWithStorage.API.csproj", "AuthWithStorage.API/"]
-RUN dotnet restore "./AuthWithStorage.API/AuthWithStorage.API.csproj"
+
+# Copy everything from the root of your repo (including sql/, src/, etc.)
 COPY . .
-WORKDIR "/src/AuthWithStorage.API"
-RUN dotnet build "./AuthWithStorage.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Restore & build your API
+WORKDIR /src/src/AuthWithStorage.API
+RUN dotnet restore "AuthWithStorage.API.csproj"
+RUN dotnet build   "AuthWithStorage.API.csproj" -c Release -o /app/build -p:SolutionDir=/src
+
+# 2) Publish stage
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AuthWithStorage.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+WORKDIR /src/src/AuthWithStorage.API
+RUN dotnet publish "AuthWithStorage.API.csproj" -c Release -o /app/publish -p:SolutionDir=/src
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+# 3) Final runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
+
+# Copy published app
 COPY --from=publish /app/publish .
+
+# Copy your SQL folder into the final image so it's available
+# at /app/sql relative to the working directory.
+COPY sql ./sql
+
 ENTRYPOINT ["dotnet", "AuthWithStorage.API.dll"]

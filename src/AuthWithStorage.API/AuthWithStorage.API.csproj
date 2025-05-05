@@ -25,7 +25,7 @@
  <ItemGroup>
    <ProjectReference Include="..\AuthWithStorage.Application\AuthWithStorage.Application.csproj" />
  </ItemGroup>
-	<Target Name="CopySqlScripts" AfterTargets="Build">
+	<Target Name="CopySqlScripts" AfterTargets="Build;Publish">
 		<PropertyGroup>
 			<!-- Get the parent of the solution directory -->
 			<SqlRoot>$([System.IO.Path]::GetFullPath('$(SolutionDir)..\sql'))</SqlRoot>

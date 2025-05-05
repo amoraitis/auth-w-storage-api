@@ -1,0 +1,46 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./src/AuthWithStorage.API/Dockerfile
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080;
+      - AuthAPIWithStorage_SysConnectionString=${SYS_DB_CONNECTION_STRING}
+      - AuthAPIWithStorage_Connections_BlobStorage=${AzureStorage_CONNECTION_STRING}
+      - AuthAPIWithStorage_ConnectionString=${DB_CONNECTION_STRING}
+      - AuthAPIWithStorage_DataCache=${Redis_CONNECTION_STRING}
+    depends_on:
+      - db
+      - azurite
+      - redis
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    environment:
+      - AZURITE_ACCOUNTS=devstoreaccount1:devstoreaccount1key
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+volumes:
+  sqlserver_data:
