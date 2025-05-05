@@ -34,7 +34,7 @@ namespace AuthWithStorage.Infrastructure.Repositories
         /// </summary>
         /// <param name="entity">The entity to add.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        Task AddAsync(T entity);
+        Task<TKey> AddAsync(T entity);
 
         /// <summary>
         /// Updates an existing entity in the repository.
@@ -74,7 +74,7 @@ namespace AuthWithStorage.Infrastructure.Repositories
 
         public abstract Task<List<T>> GetAllAsync(TSearch searchQuery);
 
-        public abstract Task AddAsync(T entity);
+        public abstract Task<TKey> AddAsync(T entity);
         public abstract Task UpdateAsync(T entity);
 
         public async Task DeleteAsync(int id)

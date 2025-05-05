@@ -9,11 +9,13 @@ namespace AuthWithStorage.Infrastructure.Repositories
     public class UserRepository : BaseRepository<User, int, UserSearchQuery>
     {
         public UserRepository(DbContext context) : base(context)
-        { }
+        {
+        }
 
         public override async Task<List<User>> GetAllAsync(UserSearchQuery searchQuery)
         {
-            var sql = "EXEC dbo.GetUsersFiltered @Username, @Role, @PermissionName, @SortBy, @SortOrder, @Offset, @PageSize";
+            var sql =
+                "EXEC dbo.GetUsersFiltered @Username, @Role, @PermissionName, @SortBy, @SortOrder, @Offset, @PageSize";
             using var connection = Context.CreateConnection();
             var result = await connection.QueryAsync<dynamic>(sql, new
             {
@@ -35,26 +37,31 @@ namespace AuthWithStorage.Infrastructure.Repositories
                 UpdatedAt = r.UpdatedAt,
                 PasswordHash = r.PasswordHash,
                 Role = r.Role,
-                Permissions = (r.PermissionIds as string)?.Split(',').Select(perm => (PermissionType) int.Parse(perm as string)).ToArray()
+                Permissions = (r.PermissionIds as string)?.Split(',')
+                    .Select(perm => (PermissionType)int.Parse(perm as string)).ToArray()
             }).ToList();
         }
 
-        public override async Task AddAsync(User entity)
+        public override async Task<int> AddAsync(User entity)
         {
-            var sql = "INSERT INTO Users (Username, Email, PasswordHash, CreatedAt) VALUES (@Username, @Email, @PasswordHash, @CreatedAt)";
-            await Context.CreateConnection().ExecuteAsync(sql, new
+            var sql =
+                "INSERT INTO Users (Username, Email, PasswordHash, CreatedAt) OUTPUT INSERTED.Id VALUES (@Username, @Email, @PasswordHash, @CreatedAt)";
+            using var connection = Context.CreateConnection();
+            var insertedId = await connection.ExecuteScalarAsync<int>(sql, new
             {
                 entity.Username,
                 entity.Email,
                 entity.PasswordHash,
                 CreatedAt = DateTime.UtcNow
             });
+            return insertedId;
         }
 
         public override async Task UpdateAsync(User entity)
         {
-            var sql = "UPDATE Users SET Username = @Username, Email = @Email, PasswordHash = @PasswordHash, UpdatedAt = @UpdatedAt WHERE Id = @Id";
-         
+            var sql =
+                "UPDATE Users SET Username = @Username, Email = @Email, PasswordHash = @PasswordHash, UpdatedAt = @UpdatedAt WHERE Id = @Id";
+
             using var connection = Context.CreateConnection();
 
             await connection.ExecuteAsync(sql, new

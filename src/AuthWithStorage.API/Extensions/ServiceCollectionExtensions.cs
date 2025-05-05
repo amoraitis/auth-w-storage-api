@@ -35,6 +35,8 @@ namespace AuthWithStorage.API.Extensions
                 .InitAuthentication(configuration)
                 .InitJwtHandler(configuration)
                 .AddAutoMapper(typeof(MappingProfile))
+                .AddHttpContextAccessor()
+                .AddRepositories()
                 .InitCache(configuration)
                 .InitHealthChecks(configuration)
                 .InitRateLimiting()
