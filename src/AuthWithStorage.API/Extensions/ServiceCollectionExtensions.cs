@@ -8,11 +8,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using System;
 using System.Text;
+using System.Threading.RateLimiting;
 using AuthWithStorage.Application.DTOs;
+using AuthWithStorage.Application.Services;
 using AuthWithStorage.Domain.Queries;
 using AuthWithStorage.Infrastructure.Account;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using AuthWithStorage.Infrastructure.Storage;
+using Azure.Identity;
+using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
@@ -30,6 +36,7 @@ namespace AuthWithStorage.API.Extensions
                 .AddAutoMapper(typeof(MappingProfile))
                 .InitHealthChecks(configuration)
                 .InitRateLimiting()
+                .InitBlobStorageInfra(configuration);
         }
 
         private static IServiceCollection InitAuthentication(this IServiceCollection services, IConfiguration configuration)
@@ -159,5 +166,22 @@ namespace AuthWithStorage.API.Extensions
             return services;
         }
 
+        private static IServiceCollection InitBlobStorageInfra(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<BlobStorageSettings>(options =>
+            {
+                options.ConnectionString = configuration["Connections_BlobStorage"];
+                options.ContainerName = configuration["BlobStorageSettings:ContainerName"];
+            });
+
+            services.AddSingleton(sp =>
+            {
+                var connectionString = sp.GetRequiredService<IOptions<BlobStorageSettings>>().Value.ConnectionString;
+                return new BlobServiceClient(connectionString);
+            });
+
+            services.AddSingleton<IFileStorageService, AzureBlobStorageService>();
+            return services;
+        }
     }
 }
