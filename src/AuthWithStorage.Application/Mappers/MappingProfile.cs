@@ -10,6 +10,8 @@ namespace AuthWithStorage.Application.Mappers
         {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, UserResponse>().ReverseMap();
+
+            CreateMap<FileMode, FileDto>().ReverseMap();
         }
     }
 }

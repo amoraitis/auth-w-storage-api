@@ -118,6 +118,11 @@ namespace AuthWithStorage.API.Extensions
         {
             services.AddScoped<IValidator<UserDto>, UserDtoValidator>();
             services.AddScoped<IRepository<User, int, UserSearchQuery>, UserRepository>();
+            
+            services.AddScoped<IValidator<FileDto>, FileDtoValidator>();
+            services.AddScoped<IValidator<FileRequest>, FileRequestValidator>();
+            services.AddScoped<IRepository<FileModel, int, FileSearchQuery>, FileRepository>();
+            services.AddScoped<IFileService, FileService>();
             return services;
         }
 

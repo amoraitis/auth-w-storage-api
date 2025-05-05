@@ -9,6 +9,7 @@ BEGIN
         Size BIGINT NOT NULL,
         UploadedByUserId INT NOT NULL,
         UploadedAt DATETIME NOT NULL,
+        UpdatedAt DATETIME NULL,
         CONSTRAINT FK_Files_UploadedByUser FOREIGN KEY (UploadedByUserId) REFERENCES dbo.Users(Id)
     );
 END;
