@@ -33,9 +33,11 @@ namespace AuthWithStorage.API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseRateLimiter();
 #pragma warning disable ASP0014 // Suggest using top level route registrations
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers().RequireAuthorization().RequireRateLimiting("fixed");
                 endpoints.MapHealthChecks("/health");
             });
 #pragma warning restore ASP0014 // Suggest using top level route registrations

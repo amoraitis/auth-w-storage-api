@@ -29,6 +29,7 @@ namespace AuthWithStorage.API.Extensions
                 .InitJwtHandler(configuration)
                 .AddAutoMapper(typeof(MappingProfile))
                 .InitHealthChecks(configuration)
+                .InitRateLimiting()
         }
 
         private static IServiceCollection InitAuthentication(this IServiceCollection services, IConfiguration configuration)
@@ -142,6 +143,19 @@ namespace AuthWithStorage.API.Extensions
             name: "sql",
             tags: new[] { "db", "sql" });
 
+            return services;
+        }
+
+        private static IServiceCollection InitRateLimiting(this IServiceCollection services)
+        {
+            services.AddRateLimiter(_ => _
+                .AddFixedWindowLimiter(policyName: "fixed", options =>
+                {
+                    options.PermitLimit = 4;
+                    options.Window = TimeSpan.FromSeconds(12);
+                    options.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                    options.QueueLimit = 2;
+                }));
             return services;
         }
 
