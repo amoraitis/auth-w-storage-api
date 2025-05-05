@@ -13,6 +13,7 @@ using AuthWithStorage.Application.DTOs;
 using AuthWithStorage.Application.Services;
 using AuthWithStorage.Domain.Queries;
 using AuthWithStorage.Infrastructure.Account;
+using AuthWithStorage.Infrastructure.Cache;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AuthWithStorage.Infrastructure.Storage;
@@ -34,6 +35,7 @@ namespace AuthWithStorage.API.Extensions
                 .InitAuthentication(configuration)
                 .InitJwtHandler(configuration)
                 .AddAutoMapper(typeof(MappingProfile))
+                .InitCache(configuration)
                 .InitHealthChecks(configuration)
                 .InitRateLimiting()
                 .InitBlobStorageInfra(configuration);
@@ -137,6 +139,20 @@ namespace AuthWithStorage.API.Extensions
             });
 
             services.AddSingleton<JwtService>();
+            return services;
+        }
+
+        private static IServiceCollection InitCache(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetValue<string>("DataCache");
+                options.InstanceName = "ServerCache";
+            });
+
+            services.AddSingleton<CachingService>();
+
             return services;
         }
 
