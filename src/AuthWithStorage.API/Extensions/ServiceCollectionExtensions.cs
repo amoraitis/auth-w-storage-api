@@ -13,6 +13,8 @@ using AuthWithStorage.Domain.Queries;
 using AuthWithStorage.Infrastructure.Account;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 
 namespace AuthWithStorage.API.Extensions
 {
@@ -26,7 +28,7 @@ namespace AuthWithStorage.API.Extensions
                 .InitAuthentication(configuration)
                 .InitJwtHandler(configuration)
                 .AddAutoMapper(typeof(MappingProfile))
-                .AddRepositories();
+                .InitHealthChecks(configuration)
         }
 
         private static IServiceCollection InitAuthentication(this IServiceCollection services, IConfiguration configuration)
@@ -129,5 +131,19 @@ namespace AuthWithStorage.API.Extensions
             services.AddSingleton<JwtService>();
             return services;
         }
+
+        private static IServiceCollection InitHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHealthChecks()
+                .AddCheck("self", () => HealthCheckResult.Healthy())
+                .AddRedis(configuration.GetValue<string>("DataCache"))
+                .AddSqlServer(
+            connectionString: configuration.GetValue<string>("ConnectionString"),
+            name: "sql",
+            tags: new[] { "db", "sql" });
+
+            return services;
+        }
+
     }
 }

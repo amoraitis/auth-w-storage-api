@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.FileProviders;
-
-namespace AuthWithStorage.API.Extensions
+﻿namespace AuthWithStorage.API.Extensions
 {
     public static class ConfigurationBuilderExtensions
     {

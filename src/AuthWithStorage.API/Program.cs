@@ -36,7 +36,7 @@ namespace AuthWithStorage.API
 #pragma warning disable ASP0014 // Suggest using top level route registrations
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers().RequireAuthorization();
+                endpoints.MapHealthChecks("/health");
             });
 #pragma warning restore ASP0014 // Suggest using top level route registrations
 
