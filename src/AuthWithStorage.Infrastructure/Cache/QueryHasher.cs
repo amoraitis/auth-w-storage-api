@@ -23,18 +23,15 @@ namespace AuthWithStorage.Infrastructure.Cache
                 return string.Empty;
             }
 
+            // TODO: Cache JsonSerializerOptions for better performance
             var queryString = JsonSerializer.Serialize(query, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 WriteIndented = false
             });
-
-            using (var sha256 = SHA256.Create())
-            {
-                var queryBytes = Encoding.UTF8.GetBytes(queryString);
-                var hashBytes = sha256.ComputeHash(queryBytes);
-                return Convert.ToBase64String(hashBytes);
-            }
+            var queryBytes = Encoding.UTF8.GetBytes(queryString);
+            var hashBytes = SHA256.HashData(queryBytes);
+            return Convert.ToBase64String(hashBytes);
         }
     }
 }

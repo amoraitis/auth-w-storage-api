@@ -16,30 +16,19 @@ namespace AuthWithStorage.Application.Services
         Task DeleteFileAsync(int id);
     }
 
-    public class FileService : IFileService
-    {
-        private readonly IRepository<FileModel, int, FileSearchQuery> _fileRepository;
-        private readonly IFileStorageService _blobStorageService;
-        private readonly CachingService _cachingService;
-        private readonly QueryHasher<FileSearchQuery> _queryHasher;
-
-        public FileService(
-            IRepository<FileModel, int, FileSearchQuery> fileRepository,
+    public class FileService(IRepository<FileModel, int, FileSearchQuery> fileRepository,
             IFileStorageService blobStorageService,
             CachingService cachingService)
-        {
-            _fileRepository = fileRepository;
-            _blobStorageService = blobStorageService;
-            _queryHasher = new QueryHasher<FileSearchQuery>();
-            _cachingService = cachingService;
-        }
+        : IFileService
+    {
+        private readonly QueryHasher<FileSearchQuery> _queryHasher = new();
 
         public async Task<List<FileDto>> GetAllFilesAsync(FileSearchQuery searchQuery)
         {
             var cacheKey = $"_files_{_queryHasher.GetHashKey(searchQuery)}";
-            return await _cachingService.GetOrSetAsync(cacheKey, async () =>
+            return await cachingService.GetOrSetAsync(cacheKey, async () =>
             {
-                var files = await _fileRepository.GetAllAsync(searchQuery);
+                var files = await fileRepository.GetAllAsync(searchQuery);
                 return files.Select(f => new FileDto
                 {
                     Id = f.Id,
@@ -54,7 +43,7 @@ namespace AuthWithStorage.Application.Services
 
         public async Task<FileDto> GetFileByIdAsync(int id)
         {
-            var file = await _fileRepository.GetByIdAsync(id);
+            var file = await fileRepository.GetByIdAsync(id);
             if (file == null) return null;
 
             return new FileDto
@@ -72,7 +61,7 @@ namespace AuthWithStorage.Application.Services
 
         public async Task<int> AddFileAsync(FileDto fileDto, Stream content)
         {
-            var filePath = await _blobStorageService.UploadFileAsync(content, fileDto.Name, fileDto.ContentType);
+            var filePath = await blobStorageService.UploadFileAsync(content, fileDto.Name, fileDto.ContentType);
 
             var fileModel = new FileModel
             {
@@ -85,35 +74,35 @@ namespace AuthWithStorage.Application.Services
                 Type = fileDto.Type
             };
 
-            var id = await _fileRepository.AddAsync(fileModel);
+            var id = await fileRepository.AddAsync(fileModel);
             return id;
         }
 
         public async Task UpdateFileAsync(FileDto fileDto, Stream conent)
         {
-            var existingFile = await _fileRepository.GetByIdAsync(fileDto.Id);
+            var existingFile = await fileRepository.GetByIdAsync(fileDto.Id);
             if (existingFile == null) throw new FileNotFoundException("File not found.");
 
             if (conent != null)
             {
-                await _blobStorageService.DeleteFileAsync(existingFile.Path);
-                existingFile.Path = await _blobStorageService.UploadFileAsync(conent, fileDto.Name, fileDto.ContentType);
+                await blobStorageService.DeleteFileAsync(existingFile.Path);
+                existingFile.Path = await blobStorageService.UploadFileAsync(conent, fileDto.Name, fileDto.ContentType);
             }
 
             existingFile.Name = fileDto.Name;
             existingFile.ContentType = fileDto.ContentType;
             existingFile.UpdatedAt = DateTime.UtcNow;
 
-            await _fileRepository.UpdateAsync(existingFile);
+            await fileRepository.UpdateAsync(existingFile);
         }
 
         public async Task DeleteFileAsync(int id)
         {
-            var file = await _fileRepository.GetByIdAsync(id);
+            var file = await fileRepository.GetByIdAsync(id);
             if (file == null) throw new FileNotFoundException("File not found.");
 
-            await _blobStorageService.DeleteFileAsync(file.Path);
-            await _fileRepository.DeleteAsync(id);
+            await blobStorageService.DeleteFileAsync(file.Path);
+            await fileRepository.DeleteAsync(id);
         }
     }
 }

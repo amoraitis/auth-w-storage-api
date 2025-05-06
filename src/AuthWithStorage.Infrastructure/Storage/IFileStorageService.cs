@@ -1,4 +1,5 @@
 namespace AuthWithStorage.Infrastructure.Storage
+{
     /// <summary>
     /// Defines a service for file storage operations such as uploading, downloading, deleting, and checking file existence.
     /// </summary>

@@ -9,17 +9,9 @@ namespace AuthWithStorage.API.Controllers
 {
     [ApiController]
     [Route("api/files")]
-    public class FileController : ControllerBase
+    public class FileController(IFileService fileService, IValidator<FileRequest> validator)
+        : ControllerBase
     {
-        private readonly IFileService _fileService;
-        private readonly IValidator<FileRequest> _validator;
-
-        public FileController(IFileService fileService, IValidator<FileRequest> validator)
-        {
-            _fileService = fileService;
-            _validator = validator;
-        }
-
         /// <returns>A response indicating the result of the operation.</returns>
         /// <remarks>
         /// Sample request using Postman:
@@ -35,7 +27,7 @@ namespace AuthWithStorage.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateFile([FromForm] FileRequest request)
         {
-            var validationResult = await _validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
@@ -45,7 +37,7 @@ namespace AuthWithStorage.API.Controllers
             int fileId;
             await using (var fileStream = request.FormFile.OpenReadStream())
             {
-                fileId = await _fileService.AddFileAsync(new FileDto{Name = request.Name, Type = request.Type, UploadedByUserId = request.UploadedByUserId, ContentType = request.ContentType}, fileStream);
+                fileId = await fileService.AddFileAsync(new FileDto{Name = request.Name, Type = request.Type, UploadedByUserId = request.UploadedByUserId, ContentType = request.ContentType}, fileStream);
             }
 
             return CreatedAtAction(nameof(GetFileById), new { id = fileId }, request);
@@ -54,7 +46,7 @@ namespace AuthWithStorage.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFileById(int id)
         {
-            var file = await _fileService.GetFileByIdAsync(id);
+            var file = await fileService.GetFileByIdAsync(id);
             if (file == null)
                 return NotFound();
 
@@ -65,7 +57,7 @@ namespace AuthWithStorage.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateFile(int id, [FromForm] FileRequest request)
         {
-            var validationResult = await _validator.ValidateAsync(request);
+            var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
             {
@@ -75,7 +67,7 @@ namespace AuthWithStorage.API.Controllers
 
             using (var fileStream = request.FormFile.OpenReadStream())
             {
-                await _fileService.UpdateFileAsync(new FileDto{Type = request.Type}, fileStream);
+                await fileService.UpdateFileAsync(new FileDto{Id = id, Type = request.Type}, fileStream);
             }
 
             return NoContent();
@@ -85,7 +77,7 @@ namespace AuthWithStorage.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFile(int id)
         {
-            await _fileService.DeleteFileAsync(id);
+            await fileService.DeleteFileAsync(id);
             return NoContent();
         }
     }
